@@ -48,7 +48,7 @@ const App: React.FC = () => {
       {/* Wrapper controls Opacity Fade-In (1s) */}
       <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
         <img
-          src="https://sothebys-md.brightspotcdn.com/webnative/images/21/3c/d037acd941e6b1b43625ad7f32d7/n11155-cchwy-02-a.jpg"
+          src="https://storage.yandexcloud.net/unrd-images/background.jpg"
           alt="Background Landscape"
           loading="lazy"
           onLoad={() => setImageLoaded(true)}
@@ -128,10 +128,20 @@ const App: React.FC = () => {
 
             {/* Artist Info */}
             <h2 className="text-2xl font-medium mb-1 text-white tracking-wide">{artistData.name}</h2>
-            <p className="text-white/40 text-sm mb-4 font-mono">{artistData.years}</p>
+            <p className="text-white/40 text-sm mb-6 font-mono">{artistData.years}</p>
+            
             <p className="text-white/80 text-sm leading-relaxed mb-6 border-b border-white/10 pb-6">
               {artistData.bio}
             </p>
+            {/* Quote Section */}
+            <blockquote className="relative p-4 mb-6 border-l-2 border-white/40 bg-white/5 rounded-r-lg">
+              <p className="text-white/90 font-light leading-relaxed text-sm md:text-base">
+                «В мире, где везде AI и искусственные изображения, самобытные картины Дюрана кажутся монументом свободы».
+              </p>
+              <footer className="mt-2 text-white/40 text-xs font-mono tracking-wide text-right">
+                — Саид Гаджиев
+              </footer>
+            </blockquote>
 
             {/* Gallery */}
             <h3 className="text-xs font-semibold uppercase tracking-widest text-white/50 mb-4">Другие работы</h3>
