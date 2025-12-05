@@ -1,20 +1,13 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# unrd.ru Landing Page
 
-# Run and deploy your AI Studio app
+Это простой лендинг-заглушка для хаба проектов unrd.ru.
 
-This contains everything you need to run your app locally.
+## Описание
+Страница представляет собой минималистичную заглушку с полноэкранным фоновым изображением, логотипом по центру и подписью в футере.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1Bu7_mf1IWzLh25rk5O6REkKGW1VEcW5Y
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Структура файлов
+- `index.html` - Точка входа HTML.
+- `index.tsx` - Точка входа React приложения.
+- `App.tsx` - Основной компонент с версткой (Tailwind CSS).
+- `logo.svg` - Логотип проекта.
+- `background.jpg` - Фоновое изображение (должно быть загружено в корень проекта).
