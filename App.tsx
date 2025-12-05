@@ -45,7 +45,7 @@ const App: React.FC = () => {
       {/* Background Image Layer */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/background.jpg"
+          src="https://sothebys-md.brightspotcdn.com/webnative/images/21/3c/d037acd941e6b1b43625ad7f32d7/n11155-cchwy-02-a.jpg"
           alt="Background Landscape"
           className="w-full h-full object-cover"
         />
