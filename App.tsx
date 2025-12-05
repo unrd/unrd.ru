@@ -86,12 +86,12 @@ const App: React.FC = () => {
             Саид Гаджиев – 2026
           </p>
           <p className="text-white/30 text-xs md:text-sm font-light">
-            Картина от{' '}
+            Картина «Lake Hamlet» –{' '}
             <button 
               onClick={openModal}
               className="hover:text-white/60 underline underline-offset-2 transition-colors cursor-pointer"
             >
-              Ашера Дюрана
+              Ашер Браун Дюран
             </button>
           </p>
         </footer>
