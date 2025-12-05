@@ -7,7 +7,7 @@ const App: React.FC = () => {
       {/* Background Image Layer */}
       <div className="absolute inset-0 z-0">
         <img
-          src="assets/background.jpg"
+          src="./background.jpg"
           alt="Background Landscape"
           className="w-full h-full object-cover"
         />
@@ -22,7 +22,7 @@ const App: React.FC = () => {
         {/* Center Logo */}
         <div className="flex-grow flex items-center justify-center animate-fade-in">
           <img 
-            src="assets/logo.svg" 
+            src="./logo.svg" 
             alt="Logo" 
             className="w-24 h-24 md:w-32 md:h-32 opacity-90 object-contain"
           />

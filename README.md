@@ -9,5 +9,5 @@
 - `index.html` - Точка входа HTML.
 - `index.tsx` - Точка входа React приложения.
 - `App.tsx` - Основной компонент с версткой (Tailwind CSS).
-- `assets/logo.svg` - Логотип проекта.
-- `assets/background.jpg` - Фоновое изображение (необходимо загрузить в папку `assets`).
+- `logo.svg` - Логотип проекта (должен лежать в корне, рядом с index.html).
+- `background.jpg` - Фоновое изображение (должно лежать в корне, рядом с index.html).
