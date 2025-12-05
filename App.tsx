@@ -5,6 +5,8 @@ const App: React.FC = () => {
   const [isMounted, setIsMounted] = useState(false);
   // isVisible контролирует CSS-классы для анимации (прозрачность)
   const [isVisible, setIsVisible] = useState(false);
+  // imageLoaded контролирует загрузку изображения и старт анимации
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Данные о художнике
   const artistData = {
@@ -40,14 +42,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-gray-900">
+    <main className="relative w-screen h-screen supports-[height:100dvh]:h-[100dvh] overflow-hidden bg-gray-900 overscroll-none touch-none">
       
       {/* Background Image Layer */}
-      <div className="absolute inset-0 z-0">
+      {/* Wrapper controls Opacity Fade-In (1s) */}
+      <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
         <img
           src="https://sothebys-md.brightspotcdn.com/webnative/images/21/3c/d037acd941e6b1b43625ad7f32d7/n11155-cchwy-02-a.jpg"
           alt="Background Landscape"
-          className="w-full h-full object-cover"
+          loading="lazy"
+          onLoad={() => setImageLoaded(true)}
+          // Image controls Scale Animation (10s Linear)
+          className={`w-full h-full object-cover transition-transform duration-[10000ms] ease-linear ${imageLoaded ? 'scale-110' : 'scale-100'}`}
         />
       </div>
 
@@ -58,7 +64,7 @@ const App: React.FC = () => {
       <div className="relative z-20 w-full h-full flex flex-col items-center justify-center p-4">
         
         {/* Center Logo */}
-        <div className="flex-grow flex items-center justify-center animate-fade-in">
+        <div className={`flex-grow flex items-center justify-center transition-opacity duration-1000 delay-500 ${imageLoaded ? 'opacity-100 animate-fade-in' : 'opacity-0'}`}>
           <svg 
             viewBox="0 0 835 193" 
             fill="none" 
@@ -75,7 +81,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <footer className="absolute bottom-8 text-center z-30">
+        <footer className={`absolute bottom-8 text-center z-30 transition-opacity duration-1000 delay-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <p className="text-white/50 text-sm md:text-base font-light tracking-wider mb-1">
             Саид Гаджиев – 2026
           </p>
@@ -94,7 +100,7 @@ const App: React.FC = () => {
       {/* Modal Layer */}
       {isMounted && (
         <div 
-          className="absolute inset-0 z-50 flex items-center justify-center p-4"
+          className="absolute inset-0 z-50 flex items-center justify-center p-4 overscroll-none"
         >
           {/* Backdrop Blur Overlay with Smooth Opacity Transition */}
           <div 
@@ -106,14 +112,14 @@ const App: React.FC = () => {
 
           {/* Liquid Glass Modal Content */}
           <div 
-            className={`relative bg-white/10 backdrop-blur-2xl border border-white/20 text-gray-100 rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-700 ease-out transform ${
+            className={`relative bg-white/10 backdrop-blur-2xl border border-white/20 text-gray-100 rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-700 ease-out transform max-h-[90vh] overflow-y-auto ${
               isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'
             }`}
           >
             {/* Close Button */}
             <button 
               onClick={closeModal}
-              className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors z-50"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
