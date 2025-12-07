@@ -122,10 +122,7 @@ const App: React.FC = () => {
             <h2 className="text-2xl font-medium mb-1 text-white tracking-wide">{artistData.name}</h2>
             <p className="text-white/40 text-sm mb-6 font-mono">{artistData.years}</p>
             
-            <p className="text-white/80 text-sm leading-relaxed mb-6 border-b border-white/10 pb-6">
-              {artistData.bio}
-            </p>
-            {/* Quote Section */}
+            {/* Quote Section - MOVED BEFORE BIO */}
             <blockquote className="relative p-4 mb-6 border-l-2 border-white/40 bg-white/5 rounded-r-lg">
               <p className="text-white/90 font-light leading-relaxed text-sm md:text-base">
                 «В мире, где везде AI и искусственные изображения, самобытные картины Дюрана кажутся монументом свободы».
@@ -134,6 +131,11 @@ const App: React.FC = () => {
                 — Саид Гаджиев
               </footer>
             </blockquote>
+
+            {/* Bio */}
+            <p className="text-white/80 text-sm leading-relaxed mb-6 border-b border-white/10 pb-6">
+              {artistData.bio}
+            </p>
 
             {/* Gallery */}
             <h3 className="text-xs font-semibold uppercase tracking-widest text-white/50 mb-4">Другие работы</h3>
