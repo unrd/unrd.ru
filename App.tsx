@@ -1,12 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const App: React.FC = () => {
   // isMounted контролирует наличие модального окна в DOM
   const [isMounted, setIsMounted] = useState(false);
   // isVisible контролирует CSS-классы для анимации (прозрачность)
   const [isVisible, setIsVisible] = useState(false);
-  // imageLoaded контролирует загрузку изображения и старт анимации
+  
+  // -- Background Logic --
+  // 0 = Original, 1-5 = AI Images
+  const [bgIndex, setBgIndex] = useState(0);
+  // imageLoaded контролирует загрузку изображения и старт анимации зума
   const [imageLoaded, setImageLoaded] = useState(false);
+  
+  // -- Transition Overlay Logic --
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayText, setOverlayText] = useState("");
+
+  // -- Button Blink Logic --
+  const [buttonBlink, setButtonBlink] = useState(false);
+
+  const AI_MAX_COUNT = 5;
+
+  const getBgUrl = (index: number) => {
+    if (index === 0) return "https://storage.yandexcloud.net/unrd-images/background.jpg";
+    return `https://storage.yandexcloud.net/unrd-images/background.ai${index}.png`;
+  };
+
+  const handleSwitchAI = () => {
+    // Calculate next index
+    // Cycle: 0 (Original) -> 1 -> 2 -> 3 -> 4 -> 5 -> 0
+    const nextIndex = bgIndex >= AI_MAX_COUNT ? 0 : bgIndex + 1;
+    
+    // Set Title Text
+    const text = nextIndex === 0 ? "Ашер Браун Дюранд" : `Nano Banana Pro ${nextIndex}`;
+    setOverlayText(text);
+
+    // Start Transition Sequence
+    setShowOverlay(true);
+    
+    // Wait for overlay to fade in before swapping image source
+    // This hides the hard cut of the image swap
+    setTimeout(() => {
+      setImageLoaded(false); // Reset load state
+      setBgIndex(nextIndex);
+    }, 1000);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    
+    // Once image is ready, wait a brief moment for effect, then hide overlay
+    if (showOverlay) {
+      setTimeout(() => {
+        setShowOverlay(false);
+      }, 1500);
+    }
+  };
+
+  // Trigger button blink when controls become visible (image loaded and no overlay)
+  useEffect(() => {
+    if (imageLoaded && !showOverlay) {
+      setButtonBlink(true);
+      const timer = setTimeout(() => setButtonBlink(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [imageLoaded, showOverlay]);
 
   // Данные о художнике
   const artistData = {
@@ -31,13 +89,11 @@ const App: React.FC = () => {
 
   const openModal = () => {
     setIsMounted(true);
-    // Небольшая задержка, чтобы браузер успел отрисовать начальное состояние (opacity-0) перед переходом
     setTimeout(() => setIsVisible(true), 10);
   };
 
   const closeModal = () => {
     setIsVisible(false);
-    // Ждем окончания анимации перед удалением из DOM
     setTimeout(() => setIsMounted(false), 700);
   };
 
@@ -45,26 +101,38 @@ const App: React.FC = () => {
     <main className="relative w-screen h-screen supports-[height:100dvh]:h-[100dvh] overflow-hidden bg-gray-900 overscroll-none touch-none">
       
       {/* Background Image Layer */}
-      {/* Wrapper controls Opacity Fade-In (1s) */}
+      {/* Wrapper controls Opacity Fade-In */}
       <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
         <img
-          src="https://storage.yandexcloud.net/unrd-images/background.jpg"
+          key={bgIndex} // Changing key forces re-mount to restart the zoom animation
+          src={getBgUrl(bgIndex)}
           alt="Background Landscape"
-          loading="lazy"
-          onLoad={() => setImageLoaded(true)}
-          // Image controls Scale Animation (10s Linear)
+          onLoad={handleImageLoad}
+          // Resetting scale-100 to scale-110 on load creates the "Approach" effect
           className={`w-full h-full object-cover transition-transform duration-[10000ms] ease-linear ${imageLoaded ? 'scale-110' : 'scale-100'}`}
         />
       </div>
 
-      {/* Dark Overlay Layer (60% opacity) */}
+      {/* Dark Overlay Layer (60% opacity) - Always present over BG */}
       <div className="absolute inset-0 z-10 bg-black/60 pointer-events-none" />
+
+      {/* Cinematic Transition Overlay (Black Screen with Title) */}
+      <div 
+        className={`fixed inset-0 z-40 bg-black flex items-center justify-center transition-opacity duration-1000 pointer-events-none ${showOverlay ? 'opacity-100' : 'opacity-0'}`}
+      >
+        <h1 
+          className={`text-white font-thin text-3xl md:text-5xl transition-all duration-1000 transform ${showOverlay ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          style={{ fontFamily: "'Geist', sans-serif" }}
+        >
+          {overlayText}
+        </h1>
+      </div>
 
       {/* Content Layer */}
       <div className="relative z-20 w-full h-full flex flex-col items-center justify-center p-4">
         
         {/* Center Logo */}
-        <div className={`flex-grow flex items-center justify-center transition-opacity duration-1000 delay-500 ${imageLoaded ? 'opacity-100 animate-fade-in' : 'opacity-0'}`}>
+        <div className={`flex-grow flex items-center justify-center transition-opacity duration-1000 delay-500 ${imageLoaded && !showOverlay ? 'opacity-100 animate-fade-in' : 'opacity-0'}`}>
           <img 
             src="https://storage.yandexcloud.net/unrd-images/logo.svg" 
             alt="unrd logo"
@@ -73,19 +141,40 @@ const App: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <footer className={`absolute bottom-8 text-center z-30 transition-opacity duration-1000 delay-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <footer className={`absolute bottom-8 flex flex-col items-center text-center z-30 transition-all duration-1000 delay-700 ${imageLoaded && !showOverlay ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          
+          {/* AI Switch Button */}
+          <button
+            onClick={handleSwitchAI}
+            className={`mb-6 px-5 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.3)] transition-all duration-300 group cursor-pointer ${
+              buttonBlink ? 'bg-white/20 animate-pulse ring-1 ring-white/30' : 'bg-white/5 hover:bg-white/10'
+            }`}
+          >
+            <span className="text-[10px] md:text-xs text-white/60 group-hover:text-white/90 tracking-[0.15em] uppercase transition-colors">
+              {bgIndex === 0 ? "Переключиться на AI" : "Следующая генерация"}
+            </span>
+          </button>
+
           <p className="text-white/50 text-sm md:text-base font-light tracking-wider mb-1">
             Саид Гаджиев – 2026
           </p>
-          <p className="text-white/30 text-xs md:text-sm font-light">
-            Картина «Lake Hamlet» –{' '}
-            <button 
-              onClick={openModal}
-              className="hover:text-white/60 underline underline-offset-2 transition-colors cursor-pointer"
-            >
-              Ашер Браун Дюран
-            </button>
-          </p>
+          <div className="h-6 flex items-center justify-center">
+            {bgIndex === 0 ? (
+              <p className="text-white/30 text-xs md:text-sm font-light">
+                Картина «Lake Hamlet» –{' '}
+                <button 
+                  onClick={openModal}
+                  className="hover:text-white/60 underline underline-offset-2 transition-colors cursor-pointer"
+                >
+                  Ашер Браун Дюран
+                </button>
+              </p>
+            ) : (
+              <p className="text-white/30 text-xs md:text-sm font-light animate-fade-in">
+                Nano Banana Pro Generation {bgIndex}
+              </p>
+            )}
+          </div>
         </footer>
       </div>
 
